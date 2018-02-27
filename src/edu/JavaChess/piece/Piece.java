@@ -3,8 +3,8 @@
  */
 
 /*Correspondance Pièce-nom ( ci = lettre de la colonne sur laquelle se trouve la pièce au démarrage de la partie)
- * {{Tour ci A, Cavalier ci B, Fou ci C, Reine ci D, Roi ci E, Fou ci F, Cavalier ci G, Tour ci H},
- * 	{Ta 	  , Cb 			 , Fc	   , Dd		   , Re		 , Ff	   , Cg			  , Th 		 }}
+ * {{Tour ci A, Cavalier ci B, Fou ci C, Reine, Roi, Fou ci F, Cavalier ci G, Tour ci H},
+ * 	{Ta 	  , Cb 			 , Fc	   , Da		   , Ro		 , Ff	   , Cg			  , Th 		 }}
  * Les pions suivent la même logique, d'où le nom général : Px, où x = [a-h]
 */
 

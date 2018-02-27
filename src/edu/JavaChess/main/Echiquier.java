@@ -7,6 +7,7 @@ package edu.JavaChess.main;
 import edu.JavaChess.piece.*;
 
 import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class Echiquier {
@@ -28,8 +29,8 @@ public class Echiquier {
 		coordPiece.put(new Tour("Th", 'b'),new Coord(0, 7));
 		coordPiece.put(new Cavalier("Cg", 'b'), new Coord(0, 6));
 		coordPiece.put(new Fou("Ff", 'b'), new Coord(0, 5));
-		coordPiece.put(new Roi("Re", 'b'), new Coord(0, 4));
-		coordPiece.put(new Reine("Dd", 'b'), new Coord(0, 3));
+		coordPiece.put(new Roi("Ro", 'b'), new Coord(0, 4));
+		coordPiece.put(new Reine("Da", 'b'), new Coord(0, 3));
 		coordPiece.put(new Fou("Fc", 'b'), new Coord(0, 2));
 		coordPiece.put(new Cavalier("Cb", 'b'), new Coord(0, 1));
 		coordPiece.put(new Tour("Ta", 'b'),new Coord(0, 0));
@@ -37,8 +38,8 @@ public class Echiquier {
 		coordPiece.put(new Tour("Th", 'n'),new Coord(7, 7));
 		coordPiece.put(new Cavalier("Cg", 'n'), new Coord(7, 6));
 		coordPiece.put(new Fou("Ff", 'n'), new Coord(7, 5));
-		coordPiece.put(new Roi("Re", 'n'), new Coord(7, 4));
-		coordPiece.put(new Reine("Dd", 'n'), new Coord(7, 3));
+		coordPiece.put(new Roi("Ro", 'n'), new Coord(7, 4));
+		coordPiece.put(new Reine("Da", 'n'), new Coord(7, 3));
 		coordPiece.put(new Fou("Fc", 'n'), new Coord(7, 2));
 		coordPiece.put(new Cavalier("Cb", 'n'), new Coord(7, 1));
 		coordPiece.put(new Tour("Ta", 'n'),new Coord(7, 0));
@@ -135,6 +136,22 @@ public class Echiquier {
 			}
 		}
 		return new PieceVide();
+	}
+	
+	
+	//Rôle : Renvoie Vrai si le roi d'une certaine couleur est échec et faux sinon
+	//Précondition : couleur = 'b' ou 'n'
+	public boolean estEnEchec(char couleur) {
+		Piece roi = this.getPiece("Ro", couleur);
+		ArrayList<Coord> casesControllees = new ArrayList<Coord>();
+		Enumeration<Piece> e = this.coordPiece.keys();
+		while(e.hasMoreElements()) {
+			Piece tmpPiece = e.nextElement();
+			if(tmpPiece.getCouleur() != couleur) {
+				casesControllees.addAll(tmpPiece.casesControlleesDans(this));
+			}
+		}
+		return casesControllees.contains(this.getCoordPiece(roi));			
 	}
 
 }
