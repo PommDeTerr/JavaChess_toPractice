@@ -14,8 +14,8 @@ import java.util.Enumeration;
 public class Echiquier {
 
 	protected Piece[][] plateau;
-	protected Piece[] priseBlanche;
-	protected Piece[] priseNoire;
+	protected ArrayList<Piece> priseBlanche;
+	protected ArrayList<Piece> priseNoire;
 	
 	//Tableau associatif rattachant chaque pièce à ses coordonnées sur le plateau (Coord = -1 si la pièce est prise)
 	protected Hashtable<Piece, Coord> coordPiece;
@@ -48,7 +48,7 @@ public class Echiquier {
 		coordPiece.put(new Pion("Ph", 'b'), new Coord(1, 7));
 		coordPiece.put(new Pion("Pg", 'b'), new Coord(1, 6));
 		coordPiece.put(new Pion("Pf", 'b'), new Coord(1, 5));
-		coordPiece.put(new Pion("Pe", 'b'), new Coord(1, 4));
+		//coordPiece.put(new Pion("Pe", 'b'), new Coord(1, 4));
 		coordPiece.put(new Pion("Pd", 'b'), new Coord(1, 3));
 		coordPiece.put(new Pion("Pc", 'b'), new Coord(1, 2));
 		coordPiece.put(new Pion("Pb", 'b'), new Coord(1, 1));
@@ -56,19 +56,19 @@ public class Echiquier {
 		
 		coordPiece.put(new Pion("Ph", 'n'), new Coord(6, 7));
 		coordPiece.put(new Pion("Pg", 'n'), new Coord(6, 6));
-		coordPiece.put(new Pion("Pf", 'n'), new Coord(5, 5));
-		/*coordPiece.put(new Pion("Pe", 'n'), new Coord(6, 4));
+		/*coordPiece.put(new Pion("Pf", 'n'), new Coord(6, 5));
+		coordPiece.put(new Pion("Pe", 'n'), new Coord(6, 4));*/
 		coordPiece.put(new Pion("Pd", 'n'), new Coord(6, 3));
 		coordPiece.put(new Pion("Pc", 'n'), new Coord(6, 2));
 		coordPiece.put(new Pion("Pb", 'n'), new Coord(6, 1));
-		coordPiece.put(new Pion("Pa", 'n'), new Coord(6, 0));*/
+		coordPiece.put(new Pion("Pa", 'n'), new Coord(6, 0));
 		
 		
 		
 		//Initialisation des espaces de jeu
 		this.plateau = new Piece[8][8];
-		this.priseBlanche = new Piece[16];
-		this.priseNoire = new Piece[16];
+		this.priseBlanche = new ArrayList<Piece>();
+		this.priseNoire = new ArrayList<Piece>();
 		
 		//Remplissage initiale du plateau par des PieceVide
 		for(int i = 0; i <= 7; i++) {
@@ -155,6 +155,7 @@ public class Echiquier {
 				casesControllees.addAll(tmpPiece.casesControlleesDans(this));
 			}
 		}
+		
 		Iterator<Coord> i = casesControllees.listIterator();	
 		while(i.hasNext()) {
 			Coord tmpCoord = i.next();
@@ -164,5 +165,30 @@ public class Echiquier {
 		}
 		return false;
 	}
-
+	
+	//Rôle : Retourne un nouvel Echiquier à partir de l'appelant, où le paramètre coup a été joué.
+	public Echiquier deplacement(Coup coup) {
+		Echiquier rEchiquier = this;
+		//L'ancienne case où se situait la pièce jouée est rendu vide
+		rEchiquier.plateau[rEchiquier.getCoordPiece(coup.getPiece()).getLigne()][rEchiquier.getCoordPiece(coup.getPiece()).getColonne()] = new PieceVide();
+		//On récupère la pièce présente sur la case Cible
+		Piece pieceCible = rEchiquier.plateau[coup.getCoordCible().getLigne()][coup.getCoordCible().getColonne()];
+		//Si elle n'est pas vide
+		if(pieceCible.getCouleur() != ' ') {
+			//On ajoute la pièce de cette case dans le ArrayList des prises correspondant
+			if(pieceCible.getCouleur() == 'n') {
+				rEchiquier.priseNoire.add(pieceCible);	
+			}else {
+				rEchiquier.priseBlanche.add(pieceCible);
+			}
+			//On établit les coordonnées de cette pièce à -1, -1 pour indiquer qu'elle est prise
+			rEchiquier.coordPiece.replace(pieceCible, new Coord(-1, -1));
+		}
+		//On déplace finalement la pièce joué, en modifiant ses coordonnées associées puis en remplissant la case du plateau aux
+		//nouvelles coordonnées.
+		rEchiquier.coordPiece.replace(coup.getPiece(), coup.getCoordCible());
+		rEchiquier.plateau[coup.getCoordCible().getLigne()][coup.getCoordCible().getColonne()] = coup.getPiece();
+		
+		return rEchiquier;
+	}
 }

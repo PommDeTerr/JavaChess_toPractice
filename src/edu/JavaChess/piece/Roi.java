@@ -19,6 +19,10 @@ public class Roi extends Piece {
 	}
 
 	public ArrayList<Coord> casesControlleesDans(Echiquier ech) {
-		return comportement.casesControlleesDans(ech, ech.getCoordPiece(this));
+		return comportement.casesControlleesDans(ech, ech.getCoordPiece(this), this.couleur);
+	}
+	
+	public ArrayList<Coord> casesPossiblesDans(Echiquier ech){
+		return comportement.casesPossiblesDans(ech, ech.getCoordPiece(this), this.couleur);
 	}
 }

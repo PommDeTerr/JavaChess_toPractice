@@ -11,6 +11,7 @@ public class main {
 		
 		Piece pionTestBlanc = test.getPieceFromCoord(new Coord(1, 0));
 		Piece pionTestNoir = test.getPieceFromCoord(new Coord(6, 7));
+		Piece roiNoir = test.getPiece("Ro", 'n');
 		
 		Piece reineNoire = test.getPiece("Da", 'n');
 		Piece fouNoirDroit = test.getPiece("Ff", 'n');
@@ -27,6 +28,14 @@ public class main {
 		
 		System.out.println(test.estEnEchec('n'));
 		System.out.println(test.getPiece("Da", 'b').casesControlleesDans(test));
+		
+		System.out.println(""+test.estEnEchec('n')+roiNoir.casesControlleesDans(test));
+		
+		Coup coupTest = new Coup("Da", test.getPiece("Da", 'b'), new Coord(3,3));
+		
+		System.out.println(test.deplacement(coupTest));
+		
+
 
 	}
 
