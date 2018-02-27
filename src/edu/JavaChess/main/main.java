@@ -12,7 +12,7 @@ public class main {
 		Piece pionTestBlanc = test.getPieceFromCoord(new Coord(1, 0));
 		Piece pionTestNoir = test.getPieceFromCoord(new Coord(6, 7));
 		
-		Piece reineNoire = test.getPiece("Dd", 'n');
+		Piece reineNoire = test.getPiece("Da", 'n');
 		Piece fouNoirDroit = test.getPiece("Ff", 'n');
 		Piece tourNoirGauche = test.getPiece("Ta", 'n');
 		
@@ -24,6 +24,9 @@ public class main {
 		System.out.println(reineNoire.toString()+reineNoire.casesPossiblesDans(test));
 		System.out.println(fouNoirDroit.toString()+fouNoirDroit.casesPossiblesDans(test));
 		System.out.println(tourNoirGauche.toString()+tourNoirGauche.casesControlleesDans(test));
+		
+		System.out.println(test.estEnEchec('n'));
+		System.out.println(test.getPiece("Da", 'b').casesControlleesDans(test));
 
 	}
 

@@ -7,6 +7,7 @@ package edu.JavaChess.main;
 import edu.JavaChess.piece.*;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -29,8 +30,8 @@ public class Echiquier {
 		coordPiece.put(new Tour("Th", 'b'),new Coord(0, 7));
 		coordPiece.put(new Cavalier("Cg", 'b'), new Coord(0, 6));
 		coordPiece.put(new Fou("Ff", 'b'), new Coord(0, 5));
-		coordPiece.put(new Roi("Ro", 'b'), new Coord(0, 4));
-		coordPiece.put(new Reine("Da", 'b'), new Coord(0, 3));
+		coordPiece.put(new Roi("Ro", 'b'), new Coord(0, 3));
+		coordPiece.put(new Reine("Da", 'b'), new Coord(0, 4));
 		coordPiece.put(new Fou("Fc", 'b'), new Coord(0, 2));
 		coordPiece.put(new Cavalier("Cb", 'b'), new Coord(0, 1));
 		coordPiece.put(new Tour("Ta", 'b'),new Coord(0, 0));
@@ -147,11 +148,21 @@ public class Echiquier {
 		Enumeration<Piece> e = this.coordPiece.keys();
 		while(e.hasMoreElements()) {
 			Piece tmpPiece = e.nextElement();
-			if(tmpPiece.getCouleur() != couleur) {
+			//Le comportement du roi n'étant pas encore défini, la fonction ne peut fonctionner que si les cases controllées par le
+			//roi adverse ne sont pas analysées. La condition tmpPiece.getNom() != "Ro" est là pour ça. En revanche, elle devra être
+			//supprimée à long terme.
+			if(tmpPiece.getCouleur() != couleur && tmpPiece.getNom() != "Ro") {
 				casesControllees.addAll(tmpPiece.casesControlleesDans(this));
 			}
 		}
-		return casesControllees.contains(this.getCoordPiece(roi));			
+		Iterator<Coord> i = casesControllees.listIterator();	
+		while(i.hasNext()) {
+			Coord tmpCoord = i.next();
+			if(tmpCoord.equals(this.getCoordPiece(roi))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -25,7 +25,7 @@ public class CompCavalier implements Comportement{
 				if(tmpCase.getColonne() >=0 && tmpCase.getLigne() >=0 && tmpCase.getColonne() <=7 && tmpCase.getLigne() <=7 && ech.getPieceFromCoord(tmpCase).getCouleur() != couleur) {
 					casesControllees.add(tmpCase);
 				}
-				if(tmpCaseBis.getColonne() >=0 && tmpCaseBis.getLigne() >=0 && tmpCaseBis.getColonne() <=7 && tmpCaseBis.getLigne() <=7 && ech.getPieceFromCoord(tmpCase).getCouleur() != couleur) {
+				if(tmpCaseBis.getColonne() >=0 && tmpCaseBis.getLigne() >=0 && tmpCaseBis.getColonne() <=7 && tmpCaseBis.getLigne() <=7 && ech.getPieceFromCoord(tmpCaseBis).getCouleur() != couleur) {
 					casesControllees.add(tmpCaseBis);
 				}
 			}
