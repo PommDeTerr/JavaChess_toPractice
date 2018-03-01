@@ -39,6 +39,9 @@ public class CompPion implements Comportement{
 				rCasesPossibles.add(tmpCoord);
 			}
 		}
+		
+		//TODO : Rajouter les cases où le pion à un pièce à manger, qui sont aussi des cases de déplacement possible
+		
 		return rCasesPossibles;
 	}
 

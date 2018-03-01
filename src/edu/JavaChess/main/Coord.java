@@ -52,6 +52,10 @@ public class Coord {
 		return true;
 	}
 	
-	
+	//Rôle : Vérifie que la Coord appelante se situe sur le plateau
+	//TODO Remplacer tous les if du projet utilisant l'expression de retour par cette méthode
+	public boolean isInRange() {
+		return this.getColonne() >=0 && this.getLigne() >=0 && this.getColonne() <=7 && this.getLigne() <=7;
+	}
 
 }

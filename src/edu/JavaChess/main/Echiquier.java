@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-public class Echiquier {
+public class Echiquier implements Cloneable {
 
 	protected Piece[][] plateau;
 	protected ArrayList<Piece> priseBlanche;
@@ -20,6 +20,54 @@ public class Echiquier {
 	//Tableau associatif rattachant chaque pièce à ses coordonnées sur le plateau (Coord = -1 si la pièce est prise)
 	protected Hashtable<Piece, Coord> coordPiece;
 	
+	public Piece[][] getPlateau() {
+		return plateau;
+	}
+
+
+
+	public void setPlateau(Piece[][] plateau) {
+		this.plateau = plateau;
+	}
+
+
+
+	public ArrayList<Piece> getPriseBlanche() {
+		return priseBlanche;
+	}
+
+
+
+	public void setPriseBlanche(ArrayList<Piece> priseBlanche) {
+		this.priseBlanche = priseBlanche;
+	}
+
+
+
+	public ArrayList<Piece> getPriseNoire() {
+		return priseNoire;
+	}
+
+
+
+	public void setPriseNoire(ArrayList<Piece> priseNoire) {
+		this.priseNoire = priseNoire;
+	}
+
+
+
+	public Hashtable<Piece, Coord> getCoordPiece() {
+		return coordPiece;
+	}
+
+
+
+	public void setCoordPiece(Hashtable<Piece, Coord> coordPiece) {
+		this.coordPiece = coordPiece;
+	}
+
+
+
 	//Constructeur d'un échiquier vierge : Toutes les pièces sont aussi créées ici, associées immédiatement à un jeu de coordonnées coorespondant
 	//à leur place initiale sur l'échiquier, et finalement placées dans le plateau à l'aide de ces coordonnées.
 	public Echiquier() {
@@ -105,14 +153,17 @@ public class Echiquier {
 		
 	}
 	
-	//Rôle : Récupère les coordonnées d'une pièce de l'échiquier
+	//TODO : Getteur de pièce depuis la Hastable, et de coord depuis le plateau --> Renommage en conséquence des deux méthodes suivantes
+	//pour ne pas les confondre avec ces deux nouvelles /!/ Penser à réécrire les noms dans tous le projet par la suite !
+	
+	//Rôle : Récupère les coordonnées d'une pièce de l'échiquier à partir de la Hashtable
 	//Précondition : La pièce DOIT être une pièce créée à l'initialisation de l'échiquier (voir méthode getPiece)
 	//TODO Ajouter une exception pour garantir la précondition. Condition : le .get renvoie null si pc n'est pas de l'échiquier
 	public Coord getCoordPiece(Piece pc){
 		return this.coordPiece.get(pc);
 	}
 	
-	//Rôle : Retourne une pièce de l'échiquier connaissant ses coordonnées
+	//Rôle : Retourne une pièce de l'échiquier connaissant ses coordonnées à partir du plateau
 	//Seules les pièces présentes sur le plateau peuvent être récupérées
 	//Précondition : coordonnées positives
 	//TODO Exception
@@ -143,7 +194,7 @@ public class Echiquier {
 	//Rôle : Renvoie Vrai si le roi d'une certaine couleur est échec et faux sinon
 	//Précondition : couleur = 'b' ou 'n'
 	public boolean estEnEchec(char couleur) {
-		Piece roi = this.getPiece("Ro", couleur);
+		Roi roi = (Roi)this.getPiece("Ro", couleur);
 		ArrayList<Coord> casesControllees = new ArrayList<Coord>();
 		Enumeration<Piece> e = this.coordPiece.keys();
 		while(e.hasMoreElements()) {
@@ -151,8 +202,15 @@ public class Echiquier {
 			//Le comportement du roi n'étant pas encore défini, la fonction ne peut fonctionner que si les cases controllées par le
 			//roi adverse ne sont pas analysées. La condition tmpPiece.getNom() != "Ro" est là pour ça. En revanche, elle devra être
 			//supprimée à long terme.
-			if(tmpPiece.getCouleur() != couleur && tmpPiece.getNom() != "Ro") {
-				casesControllees.addAll(tmpPiece.casesControlleesDans(this));
+			if(tmpPiece.getClass() == new Roi("Ro", 'n').getClass()) {
+				Roi roiAdverse = (Roi)tmpPiece;
+				if(!roiAdverse.estEnVerif()) {
+					casesControllees.addAll(roiAdverse.casesControlleesDans(this));
+				}
+			}else {
+				if(tmpPiece.getCouleur() != couleur) {
+					casesControllees.addAll(tmpPiece.casesControlleesDans(this));
+				}
 			}
 		}
 		
@@ -166,29 +224,41 @@ public class Echiquier {
 		return false;
 	}
 	
-	//Rôle : Retourne un nouvel Echiquier à partir de l'appelant, où le paramètre coup a été joué.
-	public Echiquier deplacement(Coup coup) {
-		Echiquier rEchiquier = this;
+	/*TODO Revoir complêtement la méthode avec un changement réel de l'échiquier (aucune génération de nouvel échiquier */
+	//Rôle : Modifie l'échiquier appelant avec le coup en entrée (modification des attributs en conséquences de la nouvelle position
+	//de la pièce déplacée).
+	public void deplacement(Coup coup) {
 		//L'ancienne case où se situait la pièce jouée est rendu vide
-		rEchiquier.plateau[rEchiquier.getCoordPiece(coup.getPiece()).getLigne()][rEchiquier.getCoordPiece(coup.getPiece()).getColonne()] = new PieceVide();
+		this.setCaseDansPlateau(this.getCoordPiece(coup.getPiece()), new PieceVide());
 		//On récupère la pièce présente sur la case Cible
-		Piece pieceCible = rEchiquier.plateau[coup.getCoordCible().getLigne()][coup.getCoordCible().getColonne()];
+		Piece pieceCible = this.getPieceFromCoord(coup.getCoordCible());
 		//Si elle n'est pas vide
 		if(pieceCible.getCouleur() != ' ') {
 			//On ajoute la pièce de cette case dans le ArrayList des prises correspondant
-			if(pieceCible.getCouleur() == 'n') {
-				rEchiquier.priseNoire.add(pieceCible);	
-			}else {
-				rEchiquier.priseBlanche.add(pieceCible);
-			}
+			this.addPiecePrise(pieceCible);	
 			//On établit les coordonnées de cette pièce à -1, -1 pour indiquer qu'elle est prise
-			rEchiquier.coordPiece.replace(pieceCible, new Coord(-1, -1));
+			this.setCoordOfPiece(pieceCible, new Coord(-1, -1));
 		}
 		//On déplace finalement la pièce joué, en modifiant ses coordonnées associées puis en remplissant la case du plateau aux
 		//nouvelles coordonnées.
-		rEchiquier.coordPiece.replace(coup.getPiece(), coup.getCoordCible());
-		rEchiquier.plateau[coup.getCoordCible().getLigne()][coup.getCoordCible().getColonne()] = coup.getPiece();
-		
-		return rEchiquier;
+		this.setCoordOfPiece(coup.getPiece(), coup.getCoordCible());
+		this.setCaseDansPlateau(coup.getCoordCible(), coup.getPiece());
+	}
+	
+	public void setCaseDansPlateau(Coord coord, Piece newPiece){
+		this.plateau[coord.getLigne()][coord.getColonne()] = newPiece;
+	}
+	
+	public void addPiecePrise(Piece piece) {
+		if(piece.getCouleur() == 'n') {
+			this.priseNoire.add(piece);
+		}
+		if(piece.getCouleur() == 'b') {
+			this.priseBlanche.add(piece);
+		}
+	}
+	
+	public void setCoordOfPiece(Piece piece, Coord coord) {
+		this.coordPiece.replace(piece, coord);
 	}
 }
